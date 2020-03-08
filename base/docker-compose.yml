@@ -1,0 +1,580 @@
+# 版本
+version: '3.1'
+# 服务配置
+services:
+  # Nginx配置
+  nginx-server:
+    # 镜像名称
+    image: nginx:latest
+    # 定义HostName
+    hostname: nginx-server
+    # 容器名称
+    container_name: nginx-server
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+    # 文件夹映射
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro # ro表示只读，read only
+      - ./nginx/logs:/var/log/nginx
+      - ./nginx/sites:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.2
+  # 数据库配置
+  mysql-server:
+    # 镜像名称
+    image: mysql:latest
+    # 定义HostName
+    hostname: mysql-server
+    # 容器名称
+    container_name: mysql-server
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+      # 配置数据库密码
+      MYSQL_USER: 新的用户
+      MYSQL_PASSWORD: 新用户密码
+      MYSQL_DATABASE: 创建的新数据库
+      MYSQL_ROOT_PASSWORD: root账户密码
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d:ro
+      - ./mysql/logs:/var/log/mysql
+      - ./mysql/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    # 指定启动顺序
+    depends_on:
+      - nginx-server
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.3
+  # RedisMaster配置
+  redis-6379:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6379
+    # 容器名称
+    container_name: redis-6379
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6379/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6379/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    # 端口映射
+    ports:
+      - 6379:6379
+      - 16379:16379
+    # 指定启动顺序
+    depends_on:
+      - mysql-server
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.4
+
+  # Redis 6380 配置
+  redis-6380:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6380
+    # 容器名称
+    container_name: redis-6380
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6380/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6380/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    # 端口映射
+    ports:
+      - 6380:6379
+      - 16380:16379
+    # 指定启动顺序
+    depends_on:
+      - redis-6379
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.5
+
+  # Redis 6381 配置
+  redis-6381:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6381
+    # 容器名称
+    container_name: redis-6381
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6381/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6381/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    # 端口映射
+    ports:
+      - 6381:6379
+      - 16381:16379
+    # 指定启动顺序
+    depends_on:
+      - redis-6380
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.6
+
+  # Redis 6382 配置
+  redis-6382:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6382
+    # 容器名称
+    container_name: redis-6382
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6382/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6382/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    # 端口映射
+    ports:
+      - 6382:6379
+      - 16382:16379
+    # 指定启动顺序
+    depends_on:
+      - redis-6381
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.7
+  # Redis 6383 配置
+  redis-6383:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6383
+    # 容器名称
+    container_name: redis-6383
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6383/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6383/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    # 端口映射
+    ports:
+      - 6383:6379
+      - 16383:16379
+    # 指定启动顺序
+    depends_on:
+      - redis-6382
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.8
+  # Redis 6384 配置
+  redis-6384:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6384
+    # 容器名称
+    container_name: redis-6384
+    # 是否开机启动
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6384/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6384/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    # 端口映射
+    ports:
+      - 6384:6379
+      - 16384:16379
+    # 指定启动顺序
+    depends_on:
+      - redis-6383
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.9
+  # mongo db的配置
+  mongo-server:
+    image: mongo:latest
+    hostname: mongo-server
+    container_name: mongo-server
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 密码
+      MONGO_INITDB_DATABASE: 初始化DB
+    volumes:
+      - ./mongo/data:/data/db
+      - ./mongo/logs:/data/log
+    # 端口映射
+    ports:
+      - "27017:27017"
+    # 指定启动顺序
+    depends_on:
+      - redis-6384
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.10
+  rmqnamesrv:
+    image: foxiswho/rocketmq:server-4.6.1
+    container_name: rmqnamesrv
+    hostname: rmqnamesrv
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPT_EXT: "-Duser.home=/opt -Xms512m -Xms512m -Xmn128m"
+    ports:
+      - 9876:9876
+    volumes:
+      - ./rmqs/logs:/opt/logs
+      - ./rmqs/store:/opt/store
+    # 指定启动顺序
+    depends_on:
+      - mongo-server
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.11
+        aliases:
+          - rmqnamesrv
+  rmqbroker:
+    image: foxiswho/rocketmq:broker-4.6.1
+    container_name: rmqbroker
+    hostname: rmqbroker
+    restart: always
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPT_EXT: "-Duser.home=/opt -server -Xms512m -Xms512m -Xmn128m"
+    volumes:
+      - ./rmq/logs:/opt/logs
+      - ./rmq/store:/opt/store
+      - ./rmq/brokerconf/broker.conf:/etc/rocketmq/broker.conf
+    #command: ["sh","mqbroker","-c","/etc/rocketmq/broker.conf","-n","rmqnamesrv:9876","autoCreateTopicEnable=true"]
+    ports:
+      - 10909:10909
+      - 10911:10911
+    depends_on:
+      - rmqnamesrv
+    links:
+      - rmqnamesrv
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.12
+        aliases:
+          - rmqbroker
+  rmqconsole:
+    image: styletang/rocketmq-console-ng
+    container_name: rmqconsole
+    hostname: rmqconsole
+    restart: always
+    ports:
+      - 8180:8080
+    # 环境变量
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=rmqnamesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+    depends_on:
+      - rmqbroker
+    links:
+      - rmqnamesrv
+      - rmqbroker
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.13
+        aliases:
+          - rmqconsole
+  # elasticsearch-master配置
+  es-master:
+    # 镜像名称
+    image: kanyme/elasticsearch:7.6.0
+    # 定义HostName
+    hostname: es-master
+    # 容器名称
+    container_name: es-master
+    # 是否开机启动
+    restart: always
+    # 配置时区
+    environment:
+      - TZ=Asia/Shanghai
+      - node.name=master
+      - node.master=true
+      - node.data=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - discovery.seed_hosts=es-node0,es-node1,es-tribe
+      - cluster.initial_master_nodes=master
+      - cluster.name=elasticsearch-cluster
+      - bootstrap.memory_lock=true
+      - gateway.recover_after_nodes=2
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      memlock:
+        soft: -1
+        hard: -1
+    # 文件夹映射
+    volumes:
+      - ./elasticsearch/data/master/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/data/master/logs:/usr/share/elasticsearch/logs
+    depends_on:
+      - rmqconsole
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.14
+        aliases:
+          - es-master
+  es-node0:
+    # 镜像名称
+    image: kanyme/elasticsearch:7.6.0
+    # 定义HostName
+    hostname: es-node0
+    # 容器名称
+    container_name: es-node0
+    # 是否开机启动
+    restart: always
+    # 配置时区
+    environment:
+      - TZ=Asia/Shanghai
+      - node.name=es-node0
+      - node.master=false
+      - node.data=true
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - discovery.seed_hosts=es-master,es-node1,es-tribe
+      - cluster.initial_master_nodes=master
+      - cluster.name=elasticsearch-cluster
+      - bootstrap.memory_lock=true
+      - gateway.recover_after_nodes=2
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      memlock:
+        soft: -1
+        hard: -1
+    # 文件夹映射
+    volumes:
+      - ./elasticsearch/data/node0/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/data/node0/logs:/usr/share/elasticsearch/logs
+    depends_on:
+      - es-master
+    ports:
+      - 9201:9200
+      - 9301:9300
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.15
+        aliases:
+          - es-node0
+  es-node1:
+    # 镜像名称
+    image: kanyme/elasticsearch:7.6.0
+    # 定义HostName
+    hostname: es-node1
+    # 容器名称
+    container_name: es-node1
+    # 是否开机启动
+    restart: always
+    # 配置时区
+    environment:
+      - TZ=Asia/Shanghai
+      - node.name=es-node1
+      - node.master=false
+      - node.data=true
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - discovery.seed_hosts=es-master,es-node0,es-tribe
+      - cluster.initial_master_nodes=master
+      - cluster.name=elasticsearch-cluster
+      - bootstrap.memory_lock=true
+      - gateway.recover_after_nodes=2
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      memlock:
+        soft: -1
+        hard: -1
+    # 文件夹映射
+    volumes:
+      - ./elasticsearch/data/node1/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/data/node1/logs:/usr/share/elasticsearch/logs
+    depends_on:
+      - es-node0
+    ports:
+      - 9202:9200
+      - 9302:9300
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.16
+        aliases:
+          - es-node1
+  es-tribe:
+    # 镜像名称
+    image: kanyme/elasticsearch:7.6.0
+    # 定义HostName
+    hostname: es-tribe
+    # 容器名称
+    container_name: es-tribe
+    # 是否开机启动
+    restart: always
+    # 配置时区
+    environment:
+      - TZ=Asia/Shanghai
+      - node.name=es-tribe
+      - node.master=false
+      - node.data=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - discovery.seed_hosts=es-master,es-node0,es-node1
+      - cluster.initial_master_nodes=master
+      - cluster.name=elasticsearch-cluster
+      - bootstrap.memory_lock=true
+      - gateway.recover_after_nodes=2
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      memlock:
+        soft: -1
+        hard: -1
+    # 文件夹映射
+    volumes:
+      - ./elasticsearch/data/tribe/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/data/tribe/logs:/usr/share/elasticsearch/logs
+    ports:
+      - 9203:9200
+      - 9303:9300
+    depends_on:
+      - es-node1
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.17
+        aliases:
+          - es-tribe
+  es-kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.0
+    # 定义HostName
+    hostname: es-kibana
+    # 容器名称
+    container_name: es-kibana
+    # 是否开机启动
+    restart: always
+    # 配置时区
+    environment:
+      - TZ=Asia/Shanghai
+      - SERVER_NAME=kibana
+      - ELASTICSEARCH_HOSTS=http://es-tribe:9200
+      # 需要将Kibana配置文件中的小写转换成大写，然后这个才能用于变量，才能被设置到
+      - I18N_LOCALE=zh-CN
+      - XPACK_MONITORING_ENABLED=true
+    ports:
+      - 5601:5601
+    depends_on:
+      - es-tribe
+    networks:
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.0.18
+        aliases:
+          - es-kibana
+
+#定义网络组
+networks:
+  # 网络组名称
+  app:
+    # 网络的模式
+    driver: bridge
+    # 配置网络
+    ipam:
+      driver: default
+      config:
+        ## ip地址网络 这里宿主机一般会是该网段的 172.17.0.1,所以不要设置自网段为1
+        - subnet: 172.18.0.0/24
