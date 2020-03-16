@@ -12,25 +12,22 @@ services:
     container_name: redis-6379
     # 是否开机启动
     restart: always
+    sysctls:
+      - net.core.somaxconn=1024
     # 配置本地文件
     volumes:
       - ./redis/nodes-6379/conf/redis.conf:/usr/local/etc/redis/redis.conf
       - ./redis/nodes-6379/data:/data
     # 执行命令
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
     # 端口映射
     ports:
       - 6379:6379
-      - 16379:16379
-    # 指定启动顺序
-    #depends_on:
-    #  - mysql-server
-    # 定义网络
     networks:
       # 加入的网络的名称
-      app:
+      redis:
         # ipv4的ip地址
-        ipv4_address: 172.18.0.4
+        ipv4_address: 172.18.1.2
 
   # Redis 6380 配置
   redis-6380:
@@ -42,26 +39,26 @@ services:
     container_name: redis-6380
     # 是否开机启动
     restart: always
+    sysctls:
+      - net.core.somaxconn=1024
     # 配置本地文件
     volumes:
       - ./redis/nodes-6380/conf/redis.conf:/usr/local/etc/redis/redis.conf
       - ./redis/nodes-6380/data:/data
     # 执行命令
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
     # 端口映射
     ports:
-      - 6380:6379
-      - 16380:16379
+      - 6380:6380
     # 指定启动顺序
     depends_on:
       - redis-6379
     # 定义网络
     networks:
       # 加入的网络的名称
-      app:
+      redis:
         # ipv4的ip地址
-        ipv4_address: 172.18.0.5
-
+        ipv4_address: 172.18.1.3
   # Redis 6381 配置
   redis-6381:
     # 镜像名称
@@ -72,123 +69,118 @@ services:
     container_name: redis-6381
     # 是否开机启动
     restart: always
+    sysctls:
+      - net.core.somaxconn=1024
     # 配置本地文件
     volumes:
       - ./redis/nodes-6381/conf/redis.conf:/usr/local/etc/redis/redis.conf
       - ./redis/nodes-6381/data:/data
     # 执行命令
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
     # 端口映射
     ports:
-      - 6381:6379
-      - 16381:16379
+      - 6381:6381
     # 指定启动顺序
     depends_on:
       - redis-6380
-    # 定义网络
     networks:
       # 加入的网络的名称
-      app:
+      redis:
         # ipv4的ip地址
-        ipv4_address: 172.18.0.6
-
-  # Redis 6382 配置
-  redis-6382:
+        ipv4_address: 172.18.1.4
+  # Redis Sentine 26379 配置
+  redis-sentinel-26379:
     # 镜像名称
     image: redis
     # 定义HostName
-    hostname: redis-6382
+    hostname: redis-sentinel-26379
     # 容器名称
-    container_name: redis-6382
+    container_name: redis-sentinel-26379
     # 是否开机启动
     restart: always
+    sysctls:
+      - net.core.somaxconn=1024
     # 配置本地文件
     volumes:
-      - ./redis/nodes-6382/conf/redis.conf:/usr/local/etc/redis/redis.conf
-      - ./redis/nodes-6382/data:/data
+      - ./redis/sentinel-26379/conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
     # 执行命令
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     # 端口映射
     ports:
-      - 6382:6379
-      - 16382:16379
+      - 26379:26379
     # 指定启动顺序
     depends_on:
       - redis-6381
     # 定义网络
     networks:
       # 加入的网络的名称
-      app:
-        # ipv4的ip地址
-        ipv4_address: 172.18.0.7
-  # Redis 6383 配置
-  redis-6383:
+      - redis
+
+  # Redis Sentine 26380 配置
+  redis-sentinel-26380:
     # 镜像名称
     image: redis
     # 定义HostName
-    hostname: redis-6383
+    hostname: redis-sentinel-26380
     # 容器名称
-    container_name: redis-6383
+    container_name: redis-sentinel-26380
     # 是否开机启动
     restart: always
+    sysctls:
+      - net.core.somaxconn=1024
     # 配置本地文件
     volumes:
-      - ./redis/nodes-6383/conf/redis.conf:/usr/local/etc/redis/redis.conf
-      - ./redis/nodes-6383/data:/data
+      - ./redis/sentinel-26380/conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
     # 执行命令
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     # 端口映射
     ports:
-      - 6383:6379
-      - 16383:16379
+      - 26380:26380
     # 指定启动顺序
     depends_on:
-      - redis-6382
+      - redis-sentinel-26379
     # 定义网络
     networks:
       # 加入的网络的名称
-      app:
-        # ipv4的ip地址
-        ipv4_address: 172.18.0.8
-  # Redis 6384 配置
-  redis-6384:
+      - redis
+
+  # Redis Sentine 26381 配置
+  redis-sentinel-26381:
     # 镜像名称
     image: redis
     # 定义HostName
-    hostname: redis-6384
+    hostname: redis-sentinel-26381
     # 容器名称
-    container_name: redis-6384
+    container_name: redis-sentinel-26381
     # 是否开机启动
     restart: always
+    sysctls:
+      - net.core.somaxconn=1024
     # 配置本地文件
     volumes:
-      - ./redis/nodes-6384/conf/redis.conf:/usr/local/etc/redis/redis.conf
-      - ./redis/nodes-6384/data:/data
+      - ./redis/sentinel-26381/conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
     # 执行命令
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     # 端口映射
     ports:
-      - 6384:6379
-      - 16384:16379
+      - 26381:26381
     # 指定启动顺序
     depends_on:
-      - redis-6383
+      - redis-sentinel-26380
     # 定义网络
     networks:
       # 加入的网络的名称
-      app:
-        # ipv4的ip地址
-        ipv4_address: 172.18.0.9
+      - redis
 
 #定义网络组
 networks:
   # 网络组名称
-  app:
+  redis:
     # 网络的模式
     driver: bridge
     # 配置网络
     ipam:
       driver: default
       config:
-        ## ip地址网络 这里宿主机一般会是该网段的 172.17.0.1,所以不要设置自网段为1
-        - subnet: 172.18.0.0/24
+        ## ip地址网络 这里宿主机一般会是该网段的 172.18.1.1,所以不要设置自网段为1
+        - subnet: 172.18.1.0/24

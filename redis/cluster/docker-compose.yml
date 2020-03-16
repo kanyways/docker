@@ -1,0 +1,204 @@
+# 版本
+version: '3.1'
+# 服务配置
+services:
+  # RedisMaster配置
+  redis-6379:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6379
+    # 容器名称
+    container_name: redis-6379
+    # 是否开机启动
+    restart: always
+    sysctls:
+      - net.core.somaxconn=1024
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6379/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6379/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf
+    # 端口映射
+    ports:
+      - 6379:6379
+      - 16379:16379
+    # 指定启动顺序
+    #depends_on:
+    #  - mysql-server
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.1.4
+
+  # Redis 6380 配置
+  redis-6380:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6380
+    # 容器名称
+    container_name: redis-6380
+    # 是否开机启动
+    restart: always
+    sysctls:
+      - net.core.somaxconn=1024
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6380/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6380/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf
+    # 端口映射
+    ports:
+      - 6380:6380
+      - 16380:16380
+    # 指定启动顺序
+    depends_on:
+      - redis-6379
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.1.5
+  # Redis 6381 配置
+  redis-6381:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6381
+    # 容器名称
+    container_name: redis-6381
+    # 是否开机启动
+    restart: always
+    sysctls:
+      - net.core.somaxconn=1024
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6381/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6381/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf
+    # 端口映射
+    ports:
+      - 6381:6381
+      - 16381:16381
+    # 指定启动顺序
+    depends_on:
+      - redis-6380
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.1.6
+  # Redis 6382 配置
+  redis-6382:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6382
+    # 容器名称
+    container_name: redis-6382
+    # 是否开机启动
+    restart: always
+    sysctls:
+      - net.core.somaxconn=1024
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6382/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6382/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf
+    # 端口映射
+    ports:
+      - 6382:6382
+      - 16382:16382
+    # 指定启动顺序
+    depends_on:
+      - redis-6381
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.1.7
+  # Redis 6383 配置
+  redis-6383:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6383
+    # 容器名称
+    container_name: redis-6383
+    # 是否开机启动
+    restart: always
+    sysctls:
+      - net.core.somaxconn=1024
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6383/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6383/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf
+    # 端口映射
+    ports:
+      - 6383:6383
+      - 16383:16383
+    # 指定启动顺序
+    depends_on:
+      - redis-6382
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.1.8
+  # Redis 6384 配置
+  redis-6384:
+    # 镜像名称
+    image: redis
+    # 定义HostName
+    hostname: redis-6384
+    # 容器名称
+    container_name: redis-6384
+    # 是否开机启动
+    restart: always
+    sysctls:
+      - net.core.somaxconn=1024
+    # 配置本地文件
+    volumes:
+      - ./redis/nodes-6384/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/nodes-6384/data:/data
+    # 执行命令
+    command: redis-server /usr/local/etc/redis/redis.conf
+    # 端口映射
+    ports:
+      - 6384:6384
+      - 16384:16384
+    # 指定启动顺序
+    depends_on:
+      - redis-6383
+    # 定义网络
+    networks:
+      # 加入的网络的名称
+      app:
+        # ipv4的ip地址
+        ipv4_address: 172.18.1.9
+
+#定义网络组
+networks:
+  # 网络组名称
+  app:
+    # 网络的模式
+    driver: bridge
+    # 配置网络
+    ipam:
+      driver: default
+      config:
+        ## ip地址网络 这里宿主机一般会是该网段的 172.17.0.1,所以不要设置自网段为1
+        - subnet: 172.18.1.0/24

@@ -53,6 +53,8 @@ services:
       - ./mysql/conf:/etc/mysql/conf.d:ro
       - ./mysql/logs:/var/log/mysql
       - ./mysql/data:/var/lib/mysql
+    # 设置密码加密驱动，原因参见：https://learnku.com/articles/34823
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3306:3306"
     # 指定启动顺序
